@@ -1,0 +1,13 @@
+.wrap{
+	height:35px;
+}
+.writeunit{
+	width:80px;
+}
+.tip{
+	width: 90px;
+}
+.card img{
+	height:215px;
+	object-fit: cover;
+}

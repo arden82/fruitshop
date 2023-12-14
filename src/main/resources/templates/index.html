@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>index</title>
+<link rel="stylesheet"
+	href="/webjars/bootstrap/4.6.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="/css/fruitshop.css">
+<script src="/webjars/jquery/3.6.0/jquery.min.js"></script>
+<script src="/webjars/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class=" row d-flex justify-content-between">
+			<div class="card" style="width: 18rem;">
+				<img th:src="@{/img/banana.jpg}" class="card-img-top" alt="香蕉圖">
+				<div class="card-body d-flex flex-column justify-content-around">
+					<h5 class="card-title text-center">香蕉</h5>
+					<div class=" d-flex justify-content-between">
+						<div class=" wrap d-flex justify-content-center">
+							<input type="button" value="-" class="minus"> <input class="writeunit"
+								type="text" name="banana" id="banana" value="1"> <input
+								type="button" value="+" class="plus">
+						</div>
+						<a href="#" class="btn btn-primary">購物</a>
+					</div>
+					<div class="minwrap d-flex justify-content-between">
+						<span class="tip"></span>
+						<h6>
+							價格$<span class="price">60</span>/<span class="unit">顆</span>
+						</h6>
+					</div>
+				</div>
+			</div>
+			<div class="card" style="width: 18rem;">
+				<img th:src="@{/img/apple.jpg}" class="card-img-top" alt="蘋果圖">
+				<div class="card-body d-flex flex-column justify-content-around">
+					<h5 class="card-title text-center">蘋果</h5>
+					<div class=" d-flex justify-content-between">
+						<div class=" wrap d-flex justify-content-center">
+							<input type="button" value="-" class="minus"> <input class="writeunit"
+								type="text" name="apple" id="apple" value="1"> <input
+								type="button" value="+" class="plus">
+						</div>
+						<a href="#" class="btn btn-primary">購物</a>
+					</div>
+					<div class="minwrap d-flex justify-content-between">
+						<span class="tip"></span>
+						<h6>
+							價格$<span class="price">12</span>/<span class="unit">條</span>
+						</h6>
+					</div>
+				</div>
+			</div>
+			<div class="card" style="width: 18rem;">
+				<img th:src="@{/img/watermelon.jpg}" class="card-img-top" alt="西瓜圖">
+				<div class="card-body d-flex flex-column justify-content-around">
+					<h5 class="card-title text-center">西瓜</h5>
+					<div class=" d-flex justify-content-between">
+						<div class=" wrap d-flex justify-content-center">
+							<input type="button" value="-" class="minus"> <input type="text"
+								class="writeunit" name="watermelon" id="watermelon" value="1">
+							<input type="button" value="+" class="plus">
+						</div>
+						<a href="#" class="btn btn-primary">購物</a>
+					</div>
+					<div class="minwrap d-flex justify-content-between">
+						<span class="tip"></span>
+						<h6>
+							價格$<span class="price">20</span>/<span class="unit">每片</span>
+						</h6>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row mt-5">
+		<form>
+			<div class="carwrap">
+				<ul class="carlist">
+				</ul>
+				<label for="username">購買人姓名:</label>
+				<input type="text" id="username">
+				<input type="button" value="結帳">
+			</div>
+		</form>
+		</div>
+	</div>
+</body>
+</html>
