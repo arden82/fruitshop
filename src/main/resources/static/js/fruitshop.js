@@ -1,7 +1,10 @@
 document.addEventListener("DOMContentLoaded", function() {
+	let notify = [];
+	let datawrap;
 	let ajaxwrap = document.querySelector(".ajaxwrap");
 	fetch("/products", { method: "GET" }).then(res => res.json()).then(data => {
 		console.log(data);
+		datawrap = data;
 		let str = "";
 		data.forEach(e => {
 			str += `<div class="card" style="width: 18rem;">
@@ -17,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function() {
 						<input type="button" value="購物" class="btn btn-primary add">
 					</div>
 					<div class="minwrap d-flex justify-content-between">
+					<span class="none TotalQquantity">${e.totalQquantity}</span>
 						<span class="tip"></span>
 						<h6>
 							價格$<span class="price">${e.price}</span>/<span class="unitstr">${e.unit}</span>
@@ -24,11 +28,11 @@ document.addEventListener("DOMContentLoaded", function() {
 					</div>
 						</div>
 				</div>`;
+
 		});
 
 		ajaxwrap.innerHTML += str;
 		let checkout = document.querySelector(".checkout");
-		console.log(checkout);
 		checkout.addEventListener("click", function() {
 			username = document.querySelector(".usrname").value;
 			const regexstr = /^[\u4e00-\u9fa5]{2,}$/;
@@ -54,29 +58,52 @@ document.addEventListener("DOMContentLoaded", function() {
 						flist.push({ "productname": productname, "quantity": quantity });
 						strdetail += `${productname}${quantity}${unit},`;
 					}
+
+
 					strdetail += `總計${total.textContent}元，感謝您的消費`;
 					formData.append("username", username);
 					formData.append("flist", flist);
-					fetch("/order", {
-						method: "post",
-						body: formData
-					}).then(res => res.json()).then(data => {
-						console.log("成功送出", data);
-						for (let i = 0; i < writeunitlist.length; i++) {
-							writeunitlist[i].value = 1;
+					notify = [];
+					for (let a = 0; a < datawrap.length; a++) {
+						for (let c = 0; c < flist.length; c++) {
+							if (flist[c].productname == datawrap[a].productname) {
+								if (flist[c].quantity > datawrap[a].totalQquantity)
+									notify.push({ "productname": datawrap[a].productname, "totalQquantity": datawrap[a].totalQquantity, "unit": datawrap[a].unit });
+							}
 						}
-						alert(`${username}你好，您總共購買${strdetail}`);
-						carlist.innerHTML = "";
-						total.innerHTML = "";
-						document.querySelector(".usrname").value = "";
+					}
 
-					}).catch(err => console.err("err", err))
+					if (notify.length <= 0) {
+						fetch("/order", {
+							method: "post",
+							body: formData
+						}).then(res => res.json()).then(data => {
+							console.log("成功送出", data);
+							for (let i = 0; i < writeunitlist.length; i++) {
+								writeunitlist[i].value = 1;
+							}
+							alert(`${username}你好，您總共購買${strdetail}`);
+							carlist.innerHTML = "";
+							total.innerHTML = "";
+							document.querySelector(".usrname").value = "";
+						}).catch(err => console.err("err", err));
+					} else {
+						let notifystr = "抱歉，庫存不足下列產品，請重新下單。";
+						for (let a = 0; a < notify.length; a++) {
+							notifystr += `${a + 1}.${notify[a].productname}最多只能再訂購${notify[a].totalQquantity}${notify[a].unit}`;
+						}
+						alert(`${username}你好，${notifystr}`);
+
+					}
+
 
 				}
 			} else {
 				alert("購買人資料不正確，請輸入中文名字至少兩個字")
 				document.querySelector(".usrname").value = "";
 			}
+
+
 		})
 		let wraplist = document.querySelectorAll(".wrap");
 		let addbtn = document.querySelectorAll(".add");
