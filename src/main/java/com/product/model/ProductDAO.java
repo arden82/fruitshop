@@ -13,5 +13,7 @@ public interface ProductDAO {
 	ProductVO getById(Integer id);
 
 	List<ProductVO> getProductList();
+	
+	void update(Integer id,Integer TotalQquantity);
 
 }

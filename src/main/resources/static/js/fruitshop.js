@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					</div>
 					<div class="minwrap d-flex justify-content-between">
 					<span class="none TotalQquantity">${e.totalQquantity}</span>
+					<span class="none productid">${e.id}</span>
 						<span class="tip"></span>
 						<h6>
 							價格$<span class="price">${e.price}</span>/<span class="unitstr">${e.unit}</span>
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			const regexstr = /^[\u4e00-\u9fa5]{2,}$/;
 			let valid = regexstr.test(username);
 			if (valid) {
-				let formData = new FormData();
+//				let formData = new FormData();
 				let flist = [];
 				let newli = carlist.querySelectorAll("li")//新增後lis
 				let strdetail = "";
@@ -46,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function() {
 					for (let k = 0; k < newli.length; k++) {
 						let productname = newli[k].querySelector(".liname").textContent;
 						let quantity = newli[k].querySelector(".quantity").textContent;
+						let id = newli[k].querySelector(".productid").textContent;
+
 						let unit = "";
 						for (let h = 0; h < productNames.length; h++) {
 							if (productname == productNames[h].textContent) {
@@ -55,14 +58,16 @@ document.addEventListener("DOMContentLoaded", function() {
 						}
 						console.log(unit);
 						quantity = parseInt(quantity, 10);
-						flist.push({ "productname": productname, "quantity": quantity });
+						id = parseInt(id, 10);
+						flist.push({ "productname": productname, "quantity": quantity, "id": id });
 						strdetail += `${productname}${quantity}${unit},`;
 					}
 
 
 					strdetail += `總計${total.textContent}元，感謝您的消費`;
-					formData.append("username", username);
-					formData.append("flist", flist);
+//					formData.append("username", username);
+//					formData.append("flist", flist);
+					console.log("username", username,"flist", flist);
 					notify = [];
 					for (let a = 0; a < datawrap.length; a++) {
 						for (let c = 0; c < flist.length; c++) {
@@ -75,17 +80,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
 					if (notify.length <= 0) {
 						fetch("/order", {
-							method: "post",
-							body: formData
+							method: "POST", headers: {
+								"Content-Type": "application/json"
+							},
+							body: JSON.stringify({
+								username: username,
+								flist: flist
+							})
 						}).then(res => res.json()).then(data => {
 							console.log("成功送出", data);
+
 							for (let i = 0; i < writeunitlist.length; i++) {
 								writeunitlist[i].value = 1;
 							}
 							alert(`${username}你好，您總共購買${strdetail}`);
-							carlist.innerHTML = "";
-							total.innerHTML = "";
-							document.querySelector(".usrname").value = "";
+//							carlist.innerHTML = "";
+//							total.innerHTML = "";
+//							document.querySelector(".usrname").value = "";
+							location.reload();
 						}).catch(err => console.err("err", err));
 					} else {
 						let notifystr = "抱歉，庫存不足下列產品，請重新下單。";
@@ -93,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function() {
 							notifystr += `${a + 1}.${notify[a].productname}最多只能再訂購${notify[a].totalQquantity}${notify[a].unit}`;
 						}
 						alert(`${username}你好，${notifystr}`);
-
+						location.reload();
 					}
 
 
@@ -109,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		let addbtn = document.querySelectorAll(".add");
 		let productNames = document.querySelectorAll("h5");
 		let prices = document.querySelectorAll(".price");
+		let ids = document.querySelectorAll(".productid");
 		let carlist = document.querySelector(".carlist");
 		let total = document.querySelector(".total");
 		let writeunitlist = document.querySelectorAll(".writeunit");
@@ -132,8 +145,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			addbtn[i].addEventListener("click", function() {
 				let unit = wraplist[i].querySelector(".writeunit");
 				let price = prices[i].textContent;
+				let id = ids[i].textContent;
 				unit = unit.value;
 				let productName = productNames[i].textContent;
+
 				let lis = carlist.querySelectorAll("li");//訂單裡的li
 				let list; //訂單裡的商品名
 
@@ -144,14 +159,14 @@ document.addEventListener("DOMContentLoaded", function() {
 					for (let j = 0; j < list.length; j++) {
 						if (productName == list[j].textContent) {
 							same = true;
-							lis[j].querySelector(".carwrap").innerHTML = `<div class="carwrap"><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice  ml-1">${unit * price}</span></div>`;
+							lis[j].querySelector(".carwrap").innerHTML = `<div class="carwrap"><span class="none productid">${id}</span><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice  ml-1">${unit * price}</span></div>`;
 
 						}
 					}
 					if (!same) {
 						let newListItem = document.createElement("li");
 						newListItem.className = "carunit";
-						newListItem.innerHTML = `<div class="carwrap"><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice  ml-1">${unit * price}</span></div>`;
+						newListItem.innerHTML = `<div class="carwrap"><span class="none productid">${id}</span><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice  ml-1">${unit * price}</span></div>`;
 						carlist.appendChild(newListItem);
 
 					}
@@ -159,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function() {
 				} else {
 					let newListItem = document.createElement("li");
 					newListItem.className = "carunit";
-					newListItem.innerHTML = `<div class="carwrap"><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice ml-1">${unit * price}</span></div>`;
+					newListItem.innerHTML = `<div class="carwrap"><span class="none productid">${id}</span><span class="liname">${productName}</span>x<span class="quantity">${unit}</span>小計<span class="carprice ml-1">${unit * price}</span></div>`;
 					carlist.appendChild(newListItem);
 				}
 				let sums = 0;

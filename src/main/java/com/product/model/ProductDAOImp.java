@@ -52,4 +52,13 @@ public class ProductDAOImp implements ProductDAO {
 		return  productlist;
 	}
 
+	@Override
+	public void update(Integer id, Integer TotalQquantity) {
+		String sql = "UPDATE product SET TotalQquantity =:TotalQquantity WHERE id=:id";
+		Map<String, Object> map = new HashMap<>();
+		map.put("TotalQquantity", TotalQquantity);
+		map.put("id", id);
+		jdbc.update(sql, map);
+	}
+
 }
